@@ -103,13 +103,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Chromium, ffmpeg and fonts
+      - name: Chrome stable, ffmpeg and fonts
         working-directory: ci/.github/ui-preview
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg fonts-noto-cjk fonts-noto-color-emoji
-          npm install --no-audit --no-fund
-          npx playwright install --with-deps chromium
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx playwright install --with-deps chrome ffmpeg
       - name: Record
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}

@@ -426,7 +426,7 @@ async function main() {
   await fs.mkdir(OUT, { recursive: true });
   const diff = await fs.readFile(env("DIFF_FILE"), "utf8");
   const body = await fs.readFile(env("PR_BODY_FILE", "/dev/null"), "utf8").catch(() => "");
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ channel: "chrome", chromiumSandbox: true });
   const ctxOpts = { viewport: VIEW, deviceScaleFactor: 2, locale: LOCALE, colorScheme: "light" };
 
   // what each place looks like now, for the plan

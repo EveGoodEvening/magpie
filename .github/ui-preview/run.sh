@@ -7,7 +7,8 @@
 #   run.sh <magpie source> <out dir>
 #
 # env: DEEPSEEK_API_KEY, DIFF_FILE, PR_TITLE, PR_BODY_FILE; PLAYWRIGHT_BROWSERS_PATH
-# must already point at the installed Chromium, since HOME moves.
+# must point at Playwright's installed ffmpeg, since HOME moves. Chrome stable
+# must be installed system-wide; record.mjs keeps its sandbox enabled.
 set -euo pipefail
 # the home below isolates magpie on Linux only: Windows reads USERPROFILE
 # and APPDATA, macOS keeps sign-ins in the Keychain

@@ -15,7 +15,7 @@ When a PR touches `internal/gui/assets/` or the GUI's Go code, or carries the `u
 3. **record.mjs**, which:
    - gives DeepSeek the diff and outlines of the real pages;
    - has it plan scenes: what to click, hover, type and capture;
-   - walks the plan in Chromium at 2x, with `cursor.js` drawing the pointer, its trail and each click.
+   - walks the plan in installed Chrome stable with the Chromium sandbox enabled, at 2x, with `cursor.js` drawing the pointer, its trail and each click.
    It always takes screenshots. When the change spans pages or needs interaction, it also records an mp4, never a GIF. If the key shows up on screen at any point, everything is thrown away.
 4. **publish.mjs publish** puts the files under `pr-<n>/<sha>/` on the `ui-previews` branch, which GitHub Pages serves, and rewrites the block in the description:
    - the video's poster links to the player page, since GitHub won't embed a video it didn't host;
@@ -26,8 +26,17 @@ Security: the recording job runs the PR's code without asking anyone. Any PR's c
 To run it locally (run.sh builds and starts magpie itself):
 
 ```sh
-cd .github/ui-preview && npm install && npx playwright install chromium
+cd .github/ui-preview && npm ci --ignore-scripts && npx --no-install playwright install --with-deps chrome ffmpeg
 DEEPSEEK_API_KEY=… DIFF_FILE=pr.diff PR_TITLE=… ./run.sh ../.. /tmp/out
 ```
+
+Playwright is pinned to 1.64.1 in the manifest and npm lockfile. Keep installed
+Chrome patched independently; bundled Chromium is not used. Run the recorder as
+a non-root user with a writable home and working Chromium sandbox support; it
+does not fall back to `--no-sandbox`. On shared hosts, browser execution must use
+the configured heavy-gate. `run.sh` replaces `HOME`, so keep an absolute
+`PLAYWRIGHT_BROWSERS_PATH` pointing to the cache containing Playwright's ffmpeg
+helper. System `ffmpeg` and `ffprobe` are also required for final video encoding.
+
 
 To re-run it for a PR, use `gh workflow run ui-preview.yml -f pr=<n>`.
